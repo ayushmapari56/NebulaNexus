@@ -23,11 +23,9 @@ export default function LoginPage() {
             {/* Login Card */}
             <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8 relative z-10 animate-fade-in-up">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-500/20 text-primary-400 mb-4 border border-primary-500/30 shadow-[0_0_15px_rgba(14,165,233,0.5)]">
-                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                    </div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">NebulaNexus</h1>
-                    <p className="text-slate-300 mt-2 text-sm">AI Drought Warning & Tanker Management</p>
+                    <img src="/logo.png" alt="Jal-Pravandhan Saathi Logo" className="mx-auto h-24 mb-4 drop-shadow-[0_0_10px_rgba(14,165,233,0.3)] animate-pulse" />
+                    <h1 className="text-3xl font-bold text-white tracking-tight">जल-प्रबंधन साथी</h1>
+                    <p className="text-slate-300 mt-2 text-sm tracking-wide">AI आधारित स्मार्ट जल प्रबंधन</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">

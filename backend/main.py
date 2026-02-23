@@ -1,9 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-import json
 
-app = FastAPI(title="NebulaNexus AI Drought API")
+from database import engine, Base
+import api.models as models
+from api.router import router as api_router
+
+# Create Database tables
+models.Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Jal-Pravandhan Saathi AI Drought API")
 
 # Enable CORS for React frontend
 app.add_middleware(
@@ -13,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 def root():

@@ -9,11 +9,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 const navigation = [
-    { name: 'Dashboard', href: '/', icon: HomeIcon },
-    { name: 'Stress Map', href: '/map', icon: MapIcon },
-    { name: 'Tanker Allocation', href: '/tankers', icon: TruckIcon },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-    { name: 'Alerts', href: '/alerts', icon: BellAlertIcon },
+    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+    { name: 'Stress Map', href: '/dashboard/map', icon: MapIcon },
+    { name: 'Tanker Allocation', href: '/dashboard/tankers', icon: TruckIcon },
+    { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
+    { name: 'Alerts', href: '/dashboard/alerts', icon: BellAlertIcon },
 ];
 
 export default function AdminLayout() {
@@ -25,13 +25,12 @@ export default function AdminLayout() {
             <div className="hidden md:flex md:w-64 md:flex-col glass-panel m-4 border-r-0 rounded-r-none z-10">
                 <div className="flex flex-col flex-grow pt-5 bg-white/50 overflow-y-auto">
                     <div className="flex items-center flex-shrink-0 px-4 mb-6">
-                        <span className="text-xl font-bold text-primary-900 flex items-center gap-2">
-                            <span className="bg-primary-500 p-2 rounded-lg">
-                                <svg className="w-5 h-5 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </span>
-                            NebulaNexus
+                        <span className="text-xl font-bold text-primary-900 flex items-center gap-3">
+                            <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
+                            <div className="flex flex-col leading-tight">
+                                <span className="text-lg">प्रबंधन साथी</span>
+                                <span className="text-[10px] text-slate-500 font-normal uppercase tracking-tighter">AI Smart Water</span>
+                            </div>
                         </span>
                     </div>
                     <div className="mt-5 flex-1 flex flex-col">
@@ -43,8 +42,8 @@ export default function AdminLayout() {
                                         key={item.name}
                                         to={item.href}
                                         className={`group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
-                                                ? 'bg-primary-500 text-white shadow-md shadow-primary-500/20'
-                                                : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                                            ? 'bg-primary-500 text-white shadow-md shadow-primary-500/20'
+                                            : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                                             }`}
                                     >
                                         <item.icon

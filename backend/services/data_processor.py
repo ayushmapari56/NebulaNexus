@@ -36,7 +36,7 @@ class DataProcessor:
                         continue
                         
                     # Extract the period departure percentage (converting strings like '-95%' to float)
-                    dep_str = str(row.iloc[8]).replace('%', '').strip()
+                    dep_str = str(row.iloc[9]).replace('%', '').strip()
                     if dep_str and dep_str != 'nan':
                         departure = float(dep_str)
                     else:
@@ -63,9 +63,10 @@ class DataProcessor:
                         "status": self._get_status(base_wsi),
                         "population": 5000 + abs(int(departure * 100)), # Mock population variation
                     })
-                except Exception as e:
+                except Exception:
                     continue
 
+            print(f"AI Engine: Processed {len(extracted_data)} districts. Mapping top 20 critical areas.")
             # Return top 20 most critical for the dashboard maps
             critical_districts = sorted(extracted_data, key=lambda x: x['wsi'], reverse=True)
             return critical_districts[:20]
