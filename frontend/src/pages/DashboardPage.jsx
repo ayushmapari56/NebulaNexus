@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function DashboardPage() {
     const [showWelcome, setShowWelcome] = useState(true);
-    const [isAlertActive, setIsAlertActive] = useState(false);
+    const [alertType, setAlertType] = useState('DROUGHT'); // 'DROUGHT' or 'FLOOD'
     const [damLevels, setDamLevels] = useState({
         panshet: 42.8,
         khadakwasla: 34.2,
@@ -15,19 +15,25 @@ export default function DashboardPage() {
         return () => clearTimeout(timer);
     }, []);
 
-    const triggerEmergencyAlert = () => {
+    const triggerAlert = (type) => {
         setIsAlertActive(true);
-        // Simulate a 30% absolute drop for demonstration
-        setDamLevels(prev => ({
-            ...prev,
-            panshet: Math.max(0, prev.panshet - 15),
-            khadakwasla: Math.max(0, prev.khadakwasla - 12),
-            varasgaon: Math.max(0, prev.varasgaon - 10)
-        }));
+        setAlertType(type);
+
+        let voiceMsg = "";
+
+        if (type === 'DROUGHT') {
+            // Drought Logic: Drop levels
+            setDamLevels({ panshet: 12.5, khadakwasla: 14.2, varasgaon: 8.5 });
+            voiceMsg = "सूखा अलर्ट। जल स्तर में भारी गिरावट आई है। तत्काल कार्रवाई आवश्यक है।";
+        } else {
+            // Flood Logic: Overflow > 90%
+            setDamLevels({ panshet: 94.8, khadakwasla: 92.4, varasgaon: 96.1 });
+            voiceMsg = "बाढ़ अलर्ट! जल स्तर नब्बे प्रतिशत से ऊपर है। तत्काल सुरक्षा उपाय करें।";
+        }
 
         // 1. Hindi Voice Alert (Web Speech API)
-        const speech = new SpeechSynthesisUtterance("सूखा अलर्ट। जल स्तर में तीस प्रतिशत की गिरावट आई है। तत्काल कार्रवाई आवश्यक है।");
-        speech.lang = 'hi-IN'; // Set language to Hindi (India)
+        const speech = new SpeechSynthesisUtterance(voiceMsg);
+        speech.lang = 'hi-IN';
         speech.rate = 0.85;
         speech.pitch = 1.1;
         window.speechSynthesis.cancel();
@@ -55,10 +61,10 @@ export default function DashboardPage() {
 
             {/* Global Emergency Flash Overlay */}
             {isAlertActive && (
-                <div className="fixed inset-0 z-[100] pointer-events-none animate-emergency-flash">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-4xl animate-danger-pulse flex items-center gap-4">
+                <div className={`fixed inset-0 z-[100] pointer-events-none ${alertType === 'DROUGHT' ? 'animate-emergency-flash' : 'animate-flood-flash'}`}>
+                    <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${alertType === 'DROUGHT' ? 'bg-rose-600' : 'bg-blue-600'} text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-4xl animate-danger-pulse flex items-center gap-4`}>
                         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        DROUGHT ALERT: 30% DROP
+                        {alertType === 'FLOOD' ? 'EMERGENCY: FLOOD ALERT' : 'DROUGHT ALERT: CRITICAL DROP'}
                     </div>
                 </div>
             )}
@@ -108,13 +114,20 @@ export default function DashboardPage() {
                         BECO X Ultrasonic Dam Monitoring
                     </h2>
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={triggerEmergencyAlert}
-                            className="text-xs font-bold bg-rose-600 text-white px-3 py-1.5 rounded-lg hover:bg-rose-700 transition-colors shadow-lg hover:shadow-rose-500/30 flex items-center gap-1"
-                        >
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
-                            Simulate Crisis
-                        </button>
+                        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                            <button
+                                onClick={() => triggerAlert('DROUGHT')}
+                                className="text-[10px] font-bold bg-rose-600 text-white px-3 py-1.5 rounded-lg hover:bg-rose-700 transition-colors shadow-sm flex items-center gap-1"
+                            >
+                                Simulate Drought
+                            </button>
+                            <button
+                                onClick={() => triggerAlert('FLOOD')}
+                                className="text-[10px] font-bold bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-1 ml-1"
+                            >
+                                Simulate Flood
+                            </button>
+                        </div>
                         <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                             Live Sensor Feed

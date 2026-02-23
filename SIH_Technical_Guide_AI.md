@@ -60,9 +60,12 @@ The system "looks into the future" using time-series analysis.
 
 ---
 
-## 5. IoT Integration (BECO X)
-- **Direct Edge Data**: We use **Ultrasonic Sensors** (HC-SR04/BECO X) to measure water distance at dams.
-- **AI Trigger**: If the rate of drop $(\Delta Level / \Delta Time)$ is too high, the system assumes a pipe burst or severe evaporation and triggers the **Hindi Voice Alert**.
+## 5. IoT Integration: Dual-Purpose Monitoring
+Our system leverages the **BECO X Ultrasonic Sensors** for more than just drought prediction. It acts as a 360-degree water security layer.
+
+- **Drought Monitoring**: Alerts when levels drop by >30% or hit critical WSI thresholds.
+- **Flood Prevention (NEW)**: Automated **"Emergency: Flood Alert"** when levels exceed **90%**.
+- **Hindi Voice Alerts**: Immediate local language notifications ($बाढ़\ अलर्ट$) to ensure rapid response from non-technical staff.
 
 ---
 

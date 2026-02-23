@@ -34,11 +34,16 @@ export default {
                 'danger-pulse': {
                     '0%, 100%': { opacity: '1', transform: 'scale(1)' },
                     '50%': { opacity: '0.6', transform: 'scale(1.05)' },
+                },
+                'flood-flash': {
+                    '0%, 100%': { backgroundColor: 'transparent' },
+                    '50%': { backgroundColor: 'rgba(59, 130, 246, 0.4)' }, // Blue-500 with opacity
                 }
             },
             animation: {
                 'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
                 'emergency-flash': 'emergency-flash 0.5s infinite',
+                'flood-flash': 'flood-flash 0.5s infinite',
                 'danger-pulse': 'danger-pulse 0.8s infinite',
             }
         },
