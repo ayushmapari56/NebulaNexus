@@ -33,6 +33,67 @@ export default function DashboardPage() {
                 ))}
             </div>
 
+            {/* BECO X Dam Monitoring */}
+            <div className="mt-8 glass-panel p-6">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        BECO X Ultrasonic Dam Monitoring
+                    </h2>
+                    <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live Sensor Feed
+                    </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Dam 1 */}
+                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
+                        <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Panshet Dam</h3>
+                        <div className="flex items-end gap-2">
+                            <span className="text-3xl font-extrabold text-slate-900">42.8%</span>
+                            <span className="text-sm text-amber-500 mb-1 font-medium">↓ 0.5%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
+                            <div className="bg-yellow-500 h-2.5 rounded-full" style={{ width: '42.8%' }}></div>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
+                            AI Drought Forecast: <span className="text-emerald-600 font-semibold">Stable (30 days)</span>
+                        </p>
+                    </div>
+
+                    {/* Dam 2 */}
+                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
+                        <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Khadakwasla Dam</h3>
+                        <div className="flex items-end gap-2">
+                            <span className="text-3xl font-extrabold text-slate-900">34.2%</span>
+                            <span className="text-sm text-rose-500 mb-1 font-medium">↓ 1.2%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
+                            <div className="bg-amber-500 h-2.5 rounded-full" style={{ width: '34.2%' }}></div>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
+                            AI Drought Forecast: <span className="text-amber-600 font-semibold">High Warning</span>
+                        </p>
+                    </div>
+
+                    {/* Dam 3 */}
+                    <div className="bg-slate-50 rounded-xl p-5 border border-rose-200 shadow-sm transition hover:shadow-md relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                        <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Varasgaon Dam</h3>
+                        <div className="flex items-end gap-2">
+                            <span className="text-3xl font-extrabold text-slate-900">28.5%</span>
+                            <span className="text-sm text-rose-500 mb-1 font-medium">↓ 2.1%</span>
+                        </div>
+                        <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
+                            <div className="bg-rose-500 h-2.5 rounded-full" style={{ width: '28.5%' }}></div>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
+                            AI Drought Forecast: <span className="text-rose-600 font-bold">Critical Risk (Action Needed)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Alerts Panel */}
                 <div className="glass-panel p-6 lg:col-span-1">
