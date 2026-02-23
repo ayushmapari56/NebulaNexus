@@ -28,68 +28,40 @@ export default function AllocationEnginePage() {
     const fetchAllocations = async () => {
         try {
             setLoading(true);
-            // Simulate API delay
-            setTimeout(() => {
+            const response = await fetch('http://localhost:8000/api/v1/requests');
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                // Map backend data to UI format
+                const mappedData = data.map(req => ({
+                    id: req.id,
+                    source: req.authority,
+                    location: req.location,
+                    population: req.population,
+                    water_gap: req.liters_required,
+                    priority_score: req.priority_score,
+                    ai_verification: req.ai_verification,
+                    status: req.status,
+                    recommended_tankers: Math.ceil(req.liters_required / 10000),
+                    driver: `Driver assigned on approval`
+                }));
+                setAllocations(mappedData);
+                calculateStats(mappedData);
+            } else {
                 simulateAIData();
-                setLoading(false);
-            }, 800);
+            }
         } catch (error) {
             console.error("Fetch Error:", error);
             simulateAIData();
+        } finally {
             setLoading(false);
         }
     };
 
     const simulateAIData = () => {
         const mockData = [
-            {
-                id: 101,
-                source: 'Gram Panchayat',
-                location: 'Shirur Village',
-                population: 4500,
-                water_gap: 45000,
-                priority_score: 0.92,
-                ai_verification: 'genuine', // genuine = green tick, suspicious = red tick
-                recommended_tankers: 3,
-                status: 'Pending',
-                driver: 'Sandeep R. (Driver ID: #4401)'
-            },
-            {
-                id: 102,
-                source: 'Nagar Parishad',
-                location: 'Bhavani Peth Center',
-                population: 12000,
-                water_gap: 12000,
-                priority_score: 0.85,
-                ai_verification: 'genuine',
-                recommended_tankers: 1,
-                status: 'Pending',
-                driver: 'Rahul M. (Driver ID: #4402)'
-            },
-            {
-                id: 103,
-                source: 'Gram Panchayat',
-                location: 'Velhe North Block',
-                population: 2100,
-                water_gap: 28000,
-                priority_score: 0.78,
-                ai_verification: 'suspicious', // Potential duplication detected
-                recommended_tankers: 2,
-                status: 'Pending',
-                driver: 'Amit K. (Driver ID: #4403)'
-            },
-            {
-                id: 104,
-                source: 'Nagar Parishad',
-                location: 'Khandala East Zone',
-                population: 8000,
-                water_gap: 8000,
-                priority_score: 0.45,
-                ai_verification: 'genuine',
-                recommended_tankers: 1,
-                status: 'Pending',
-                driver: 'Vikas P. (Driver ID: #4404)'
-            }
+            { id: 101, source: 'Gram Panchayat', location: 'Shirur Village', population: 4500, water_gap: 45000, priority_score: 0.92, ai_verification: 'genuine', recommended_tankers: 3, status: 'Pending', driver: 'Sandeep R. (Driver ID: #4401)' },
+            { id: 102, source: 'Nagar Parishad', location: 'Bhavani Peth Center', population: 12000, water_gap: 12000, priority_score: 0.85, ai_verification: 'genuine', recommended_tankers: 1, status: 'Pending', driver: 'Rahul M. (Driver ID: #4402)' },
         ];
         setAllocations(mockData);
         calculateStats(mockData);
@@ -103,14 +75,24 @@ export default function AllocationEnginePage() {
         });
     };
 
-    const handleAction = (id, newStatus) => {
-        const allocation = allocations.find(a => a.id === id);
-        setAllocations(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
+    const handleAction = async (id, newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/v1/requests/${id}/action?status=${newStatus}`, {
+                method: 'POST'
+            });
 
-        if (newStatus === 'Approved') {
-            showNotification(`✅ Dispatched to ${allocation.driver}. Notification sent to Driver's App!`);
-        } else if (newStatus === 'Rejected') {
-            showNotification(`❌ Request for ${allocation.location} has been rejected.`);
+            if (response.ok) {
+                setAllocations(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
+                if (newStatus === 'Approved') {
+                    showNotification(`✅ Dispatched! Notification sent to Driver's App!`);
+                } else {
+                    showNotification(`❌ Request rejected.`);
+                }
+            }
+        } catch (error) {
+            console.error("Action failed:", error);
+            // Fallback for UI responsiveness
+            setAllocations(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
         }
     };
 

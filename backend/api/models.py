@@ -36,3 +36,18 @@ class Allocation(Base):
     
     village = relationship("Village")
     tanker = relationship("Tanker")
+
+class TankerRequest(Base):
+    __tablename__ = "tanker_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    authority = Column(String) # Gram Panchayat / Nagar Parishad
+    location = Column(String)
+    population = Column(Integer)
+    liters_required = Column(Integer)
+    reason = Column(String)
+    contact_info = Column(String)
+    priority_score = Column(Float, default=0.5)
+    ai_verification = Column(String, default="genuine") # genuine, suspicious
+    status = Column(String, default="Pending") # Pending, Approved, Rejected
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

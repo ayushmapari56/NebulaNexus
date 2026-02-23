@@ -6,14 +6,38 @@ export default function RequestFormPage({ title, role }) {
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const [formData, setFormData] = useState({
+        authority: title || role,
+        location: '',
+        population: '',
+        liters_required: '',
+        reason: '',
+        contact_info: 'Official Nodal Officer'
+    });
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Mocking API call to backend
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/requests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (response.ok) {
+                setSubmitted(true);
+            }
+        } catch (error) {
+            console.error("Submission failed:", error);
+            // Fallback for demo if backend is unreachable
             setSubmitted(true);
-        }, 2000);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (e, field) => {
+        setFormData({ ...formData, [field]: e.target.value });
     };
 
     if (submitted) {
@@ -27,7 +51,7 @@ export default function RequestFormPage({ title, role }) {
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">Request Submitted!</h2>
                     <p className="text-slate-500 mb-8">
-                        Your request ID <b>#TNK-{Math.floor(Math.random() * 9000) + 1000}</b> has been sent to the District Collector.
+                        Your request has been sent to the District Collector.
                         AI analysis is currently prioritizing your route.
                     </p>
                     <button
@@ -69,31 +93,59 @@ export default function RequestFormPage({ title, role }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-slate-700 ml-1">Local Body Name</label>
-                                        <input required type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all" placeholder="e.g. Shirur Nagar Parishad" />
+                                        <label className="text-sm font-semibold text-slate-700 ml-1">Local Body Name / Location</label>
+                                        <input
+                                            required type="text"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                                            placeholder="e.g. Shirur Village"
+                                            value={formData.location}
+                                            onChange={(e) => handleChange(e, 'location')}
+                                        />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-slate-700 ml-1">Pincode / Ward No.</label>
-                                        <input required type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all" placeholder="411001" />
+                                        <label className="text-sm font-semibold text-slate-700 ml-1">Authority Type</label>
+                                        <input
+                                            disabled type="text"
+                                            className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-slate-500"
+                                            value={title}
+                                        />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-slate-700 ml-1">Population in Need</label>
-                                    <input required type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all" placeholder="Approx number of residents" />
+                                    <input
+                                        required type="number"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                                        placeholder="Approx number of residents"
+                                        value={formData.population}
+                                        onChange={(e) => handleChange(e, 'population')}
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-slate-700 ml-1">Daily Water Deficit (Liters)</label>
                                     <div className="relative">
-                                        <input required type="number" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all pr-12" placeholder="e.g. 20000" />
+                                        <input
+                                            required type="number"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all pr-12"
+                                            placeholder="e.g. 20000"
+                                            value={formData.liters_required}
+                                            onChange={(e) => handleChange(e, 'liters_required')}
+                                        />
                                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs uppercase">Ltrs</span>
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-slate-700 ml-1">Brief Justification</label>
-                                    <textarea required rows="4" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all resize-none" placeholder="Reason for shortage (e.g., Borewell failure, sudden usage spike)..."></textarea>
+                                    <textarea
+                                        required rows="4"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all resize-none"
+                                        placeholder="Reason for shortage..."
+                                        value={formData.reason}
+                                        onChange={(e) => handleChange(e, 'reason')}
+                                    ></textarea>
                                 </div>
 
                                 <button

@@ -55,13 +55,40 @@ def approve_allocation(allocation_id: int, db: Session = Depends(get_db)):
     }
 
 # --- Local Body Requests ---
-@router.post("/requests")
-def submit_tanker_request(request_data: dict, db: Session = Depends(get_db)):
-    # In a full app, we would save this to a 'TankerRequests' table
-    # For SIH demo, we simulate success and log it for the AI engine
-    print(f"AI ENGINE: New Request from {request_data.get('authority')} for {request_data.get('liters')} liters.")
-    return {
-        "status": "success",
-        "request_id": f"TNK-{1000 + db.query(models.Allocation).count()}",
-        "message": "Water tanker request submitted successfully. Priority analysis in progress."
-    }
+@router.get("/requests", response_model=List[schemas.TankerRequestResponse])
+def get_requests(db: Session = Depends(get_db)):
+    return db.query(models.TankerRequest).all()
+
+@router.post("/requests", response_model=schemas.TankerRequestResponse)
+def submit_tanker_request(req: schemas.TankerRequestBase, db: Session = Depends(get_db)):
+    # AI Logic: Auto-calculate priority and audit
+    priority = 0.5
+    audit = "genuine"
+    
+    # Suspicious if population is low but liters are high (Anti-Fraud)
+    if req.liters_required > (req.population * 200): # >200L per person is suspicious for drought aid
+        audit = "suspicious"
+        priority = 0.9 # High priority for audit
+    
+    db_req = models.TankerRequest(
+        **req.dict(),
+        priority_score=priority,
+        ai_verification=audit,
+        status="Pending"
+    )
+    db.add(db_req)
+    db.commit()
+    db.refresh(db_req)
+    
+    print(f"AI ENGINE: New Persistent Request from {req.authority} at {req.location}")
+    return db_req
+
+@router.post("/requests/{request_id}/action")
+def update_request_status(request_id: int, status: str, db: Session = Depends(get_db)):
+    db_req = db.query(models.TankerRequest).filter(models.TankerRequest.id == request_id).first()
+    if not db_req:
+        raise HTTPException(status_code=404, detail="Request not found")
+    
+    db_req.status = status
+    db.commit()
+    return {"status": "success", "request_id": request_id, "new_status": status}
