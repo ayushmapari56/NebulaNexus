@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function DashboardPage() {
     const [showWelcome, setShowWelcome] = useState(true);
+    const [isAlertActive, setIsAlertActive] = useState(false);
     const [alertType, setAlertType] = useState('DROUGHT'); // 'DROUGHT' or 'FLOOD'
     const [damLevels, setDamLevels] = useState({
         panshet: 42.8,
