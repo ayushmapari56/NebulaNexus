@@ -92,3 +92,25 @@ def update_request_status(request_id: int, status: str, db: Session = Depends(ge
     db_req.status = status
     db.commit()
     return {"status": "success", "request_id": request_id, "new_status": status}
+
+# --- Mobile Notifications (Polling Shortcut) ---
+@router.get("/mobile/notifications", response_model=List[schemas.MobileNotificationResponse])
+def get_mobile_notifications(db: Session = Depends(get_db)):
+    # Return all unread notifications
+    return db.query(models.MobileNotification).filter(models.MobileNotification.is_read == False).all()
+
+@router.post("/mobile/notifications", response_model=schemas.MobileNotificationResponse)
+def send_mobile_notification(notif: schemas.MobileNotificationBase, db: Session = Depends(get_db)):
+    db_notif = models.MobileNotification(**notif.dict())
+    db.add(db_notif)
+    db.commit()
+    db.refresh(db_notif)
+    return db_notif
+
+@router.post("/mobile/notifications/{notif_id}/read")
+def mark_notification_read(notif_id: int, db: Session = Depends(get_db)):
+    db_notif = db.query(models.MobileNotification).filter(models.MobileNotification.id == notif_id).first()
+    if db_notif:
+        db_notif.is_read = True
+        db.commit()
+    return {"status": "success"}

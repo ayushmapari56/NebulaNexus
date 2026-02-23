@@ -85,6 +85,20 @@ export default function AllocationEnginePage() {
                 setAllocations(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
                 if (newStatus === 'Approved') {
                     showNotification(`✅ Dispatched! Notification sent to Driver's App!`);
+
+                    // Trigger Mobile Notification via API
+                    try {
+                        await fetch('http://localhost:8000/api/v1/mobile/notifications', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                title: "New Dispatch! 🚛",
+                                message: `You have been assigned to ${allocations.find(a => a.id === id).location}. Start immediately!`
+                            })
+                        });
+                    } catch (e) {
+                        console.error("Mobile notification trigger failed", e);
+                    }
                 } else {
                     showNotification(`❌ Request rejected.`);
                 }

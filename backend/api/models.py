@@ -51,3 +51,12 @@ class TankerRequest(Base):
     ai_verification = Column(String, default="genuine") # genuine, suspicious
     status = Column(String, default="Pending") # Pending, Approved, Rejected
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class MobileNotification(Base):
+    __tablename__ = "mobile_notifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    message = Column(String)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

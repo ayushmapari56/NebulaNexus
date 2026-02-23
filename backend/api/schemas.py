@@ -67,3 +67,15 @@ class TankerRequestResponse(TankerRequestBase):
 
     class Config:
         from_attributes = True
+
+class MobileNotificationBase(BaseModel):
+    title: str
+    message: str
+
+class MobileNotificationResponse(MobileNotificationBase):
+    id: int
+    is_read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
