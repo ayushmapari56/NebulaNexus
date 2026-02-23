@@ -1,17 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function DashboardPage() {
     const [showWelcome, setShowWelcome] = useState(true);
+    const [isAlertActive, setIsAlertActive] = useState(false);
+    const [damLevels, setDamLevels] = useState({
+        panshet: 42.8,
+        khadakwasla: 34.2,
+        varasgaon: 28.5
+    });
+    const audioRef = useRef(null);
 
     useEffect(() => {
-        // Hide the animated welcome purely for layout shifting after 5s if desired,
-        // but keeping it visible as a nice header works too.
         const timer = setTimeout(() => setShowWelcome(false), 5000);
         return () => clearTimeout(timer);
     }, []);
 
+    const triggerEmergencyAlert = () => {
+        setIsAlertActive(true);
+        // Simulate a 30% absolute drop for demonstration
+        setDamLevels(prev => ({
+            ...prev,
+            panshet: Math.max(0, prev.panshet - 15),
+            khadakwasla: Math.max(0, prev.khadakwasla - 12),
+            varasgaon: Math.max(0, prev.varasgaon - 10)
+        }));
+
+        // 1. Hindi Voice Alert (Web Speech API)
+        const speech = new SpeechSynthesisUtterance("सूखा अलर्ट। जल स्तर में तीस प्रतिशत की गिरावट आई है। तत्काल कार्रवाई आवश्यक है।");
+        speech.lang = 'hi-IN'; // Set language to Hindi (India)
+        speech.rate = 0.85;
+        speech.pitch = 1.1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(speech);
+
+        // 2. Alarm Sound (MP3 Beep)
+        if (!audioRef.current) {
+            audioRef.current = new Audio('https://www.soundjay.com/buttons/beep-01a.mp3');
+            audioRef.current.loop = true;
+        }
+        audioRef.current.play().catch(e => console.log("Audio play blocked by browser policy"));
+
+        // Auto-stop after 20 seconds (User requested)
+        setTimeout(() => {
+            setIsAlertActive(false);
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
+        }, 20000);
+    };
+
     return (
-        <div className="space-y-6">
+        <div className={`space-y-6 transition-all duration-300 ${isAlertActive ? 'ring-8 ring-rose-500 ring-inset' : ''}`}>
+
+            {/* Global Emergency Flash Overlay */}
+            {isAlertActive && (
+                <div className="fixed inset-0 z-[100] pointer-events-none animate-emergency-flash">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-rose-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-4xl animate-danger-pulse flex items-center gap-4">
+                        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        DROUGHT ALERT: 30% DROP
+                    </div>
+                </div>
+            )}
+
             {/* Animated Welcome Header */}
             <div className={`transition-all duration-1000 ease-in-out ${showWelcome ? 'opacity-100 transform translate-y-0' : 'opacity-100'} bg-gradient-to-r from-primary-600 to-emerald-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden`}>
                 <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 blur-2xl animate-pulse"></div>
@@ -50,27 +101,38 @@ export default function DashboardPage() {
             </div>
 
             {/* BECO X Dam Monitoring */}
-            <div className="mt-8 glass-panel p-6">
+            <div className={`mt-8 glass-panel p-6 transition-colors duration-500 ${isAlertActive ? 'bg-rose-50' : ''}`}>
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                         <svg className="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         BECO X Ultrasonic Dam Monitoring
                     </h2>
-                    <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Live Sensor Feed
-                    </span>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={triggerEmergencyAlert}
+                            className="text-xs font-bold bg-rose-600 text-white px-3 py-1.5 rounded-lg hover:bg-rose-700 transition-colors shadow-lg hover:shadow-rose-500/30 flex items-center gap-1"
+                        >
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path></svg>
+                            Simulate Crisis
+                        </button>
+                        <span className="text-xs font-medium bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Live Sensor Feed
+                        </span>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Dam 1 */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
+                    <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
                         <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Panshet Dam</h3>
                         <div className="flex items-end gap-2">
-                            <span className="text-3xl font-extrabold text-slate-900">42.8%</span>
-                            <span className="text-sm text-amber-500 mb-1 font-medium">↓ 0.5%</span>
+                            <span className="text-3xl font-extrabold text-slate-900">{damLevels.panshet.toFixed(1)}%</span>
+                            <span className={`text-sm mb-1 font-medium ${isAlertActive ? 'text-rose-600 animate-bounce' : 'text-amber-500'}`}>
+                                ↓ {isAlertActive ? '15.0' : '0.5'}%
+                            </span>
                         </div>
                         <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
-                            <div className="bg-yellow-500 h-2.5 rounded-full" style={{ width: '42.8%' }}></div>
+                            <div className={`${damLevels.panshet < 30 ? 'bg-rose-500' : 'bg-yellow-500'} h-2.5 rounded-full transition-all duration-1000`} style={{ width: `${damLevels.panshet}%` }}></div>
                         </div>
                         <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
                             AI Drought Forecast: <span className="text-emerald-600 font-semibold">Stable (30 days)</span>
@@ -78,14 +140,16 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Dam 2 */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
+                    <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm transition hover:shadow-md">
                         <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Khadakwasla Dam</h3>
                         <div className="flex items-end gap-2">
-                            <span className="text-3xl font-extrabold text-slate-900">34.2%</span>
-                            <span className="text-sm text-rose-500 mb-1 font-medium">↓ 1.2%</span>
+                            <span className="text-3xl font-extrabold text-slate-900">{damLevels.khadakwasla.toFixed(1)}%</span>
+                            <span className={`text-sm mb-1 font-medium ${isAlertActive ? 'text-rose-600 animate-bounce' : 'text-rose-500'}`}>
+                                ↓ {isAlertActive ? '12.0' : '1.2'}%
+                            </span>
                         </div>
                         <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
-                            <div className="bg-amber-500 h-2.5 rounded-full" style={{ width: '34.2%' }}></div>
+                            <div className={`${damLevels.khadakwasla < 30 ? 'bg-rose-500' : 'bg-amber-500'} h-2.5 rounded-full transition-all duration-1000`} style={{ width: `${damLevels.khadakwasla}%` }}></div>
                         </div>
                         <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
                             AI Drought Forecast: <span className="text-amber-600 font-semibold">High Warning</span>
@@ -93,15 +157,17 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Dam 3 */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-rose-200 shadow-sm transition hover:shadow-md relative overflow-hidden">
+                    <div className={`bg-white rounded-xl p-5 border shadow-sm transition hover:shadow-md relative overflow-hidden ${damLevels.varasgaon < 20 ? 'border-rose-300' : 'border-slate-200'}`}>
                         <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
                         <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Varasgaon Dam</h3>
                         <div className="flex items-end gap-2">
-                            <span className="text-3xl font-extrabold text-slate-900">28.5%</span>
-                            <span className="text-sm text-rose-500 mb-1 font-medium">↓ 2.1%</span>
+                            <span className="text-3xl font-extrabold text-slate-900">{damLevels.varasgaon.toFixed(1)}%</span>
+                            <span className={`text-sm mb-1 font-medium ${isAlertActive ? 'text-rose-600 animate-bounce' : 'text-rose-500'}`}>
+                                ↓ {isAlertActive ? '10.0' : '2.1'}%
+                            </span>
                         </div>
                         <div className="w-full bg-slate-200 rounded-full h-2.5 mt-4 overflow-hidden">
-                            <div className="bg-rose-500 h-2.5 rounded-full" style={{ width: '28.5%' }}></div>
+                            <div className="bg-rose-500 h-2.5 rounded-full transition-all duration-1000" style={{ width: `${damLevels.varasgaon}%` }}></div>
                         </div>
                         <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-200">
                             AI Drought Forecast: <span className="text-rose-600 font-bold">Critical Risk (Action Needed)</span>

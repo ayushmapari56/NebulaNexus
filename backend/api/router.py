@@ -53,3 +53,15 @@ def approve_allocation(allocation_id: int, db: Session = Depends(get_db)):
         "status": "success",
         "message": f"Allocation {allocation_id} approved. Push notification sent to Driver {allocation.tanker.driver_name} via App."
     }
+
+# --- Local Body Requests ---
+@router.post("/requests")
+def submit_tanker_request(request_data: dict, db: Session = Depends(get_db)):
+    # In a full app, we would save this to a 'TankerRequests' table
+    # For SIH demo, we simulate success and log it for the AI engine
+    print(f"AI ENGINE: New Request from {request_data.get('authority')} for {request_data.get('liters')} liters.")
+    return {
+        "status": "success",
+        "request_id": f"TNK-{1000 + db.query(models.Allocation).count()}",
+        "message": "Water tanker request submitted successfully. Priority analysis in progress."
+    }

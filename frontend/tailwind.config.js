@@ -26,10 +26,20 @@ export default {
                 'fade-in-up': {
                     '0%': { opacity: '0', transform: 'translateY(20px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                'emergency-flash': {
+                    '0%, 100%': { backgroundColor: 'transparent' },
+                    '50%': { backgroundColor: 'rgba(239, 68, 68, 0.4)' },
+                },
+                'danger-pulse': {
+                    '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                    '50%': { opacity: '0.6', transform: 'scale(1.05)' },
                 }
             },
             animation: {
                 'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
+                'emergency-flash': 'emergency-flash 0.5s infinite',
+                'danger-pulse': 'danger-pulse 0.8s infinite',
             }
         },
     },

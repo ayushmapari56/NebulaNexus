@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { role } = useParams();
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        // Mock authentication delay for animation
+        // Role-based redirection logic
         setTimeout(() => {
-            navigate('/dashboard');
-        }, 1500);
+            if (role === 'admin') navigate('/dashboard');
+            else if (role === 'nagar-parishad') navigate('/portal/nagar-parishad');
+            else if (role === 'gram-panchayat') navigate('/portal/gram-panchayat');
+            else navigate('/dashboard'); // Fallback
+        }, 1200);
     };
 
     return (
