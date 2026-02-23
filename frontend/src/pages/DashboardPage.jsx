@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function DashboardPage() {
+    const [showWelcome, setShowWelcome] = useState(true);
+
+    useEffect(() => {
+        // Hide the animated welcome purely for layout shifting after 5s if desired,
+        // but keeping it visible as a nice header works too.
+        const timer = setTimeout(() => setShowWelcome(false), 5000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="space-y-6">
+            {/* Animated Welcome Header */}
+            <div className={`transition-all duration-1000 ease-in-out ${showWelcome ? 'opacity-100 transform translate-y-0' : 'opacity-100'} bg-gradient-to-r from-primary-600 to-emerald-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden`}>
+                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 blur-2xl animate-pulse"></div>
+                <h1 className="text-3xl font-bold mb-1 animate-fade-in-up delay-100">Welcome Back, Collector Sahib</h1>
+                <p className="text-primary-100 text-sm animate-fade-in-up delay-300">The AI has analyzed 12,000+ data points since your last login. Here is your district's water status.</p>
+            </div>
+
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900">District Overview</h1>
+                <h2 className="text-xl font-bold text-slate-900">District Overview</h2>
                 <div className="flex items-center gap-2">
                     <span className="flex h-3 w-3 relative">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>

@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './layouts/AdminLayout';
 import DashboardPage from './pages/DashboardPage';
 import MapPage from './pages/MapPage';
+import LoginPage from './pages/LoginPage';
 
 // Placeholder components for routing before full implementation
 const PlaceholderPage = ({ title }) => (
@@ -18,7 +19,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AdminLayout />}>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/dashboard" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="map" element={<MapPage />} />
           <Route path="tankers" element={<PlaceholderPage title="Tanker Allocation Engine" />} />
