@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import API_BASE_URL from '../apiConfig';
 import 'leaflet/dist/leaflet.css';
 
 const getMarkerColor = (wsi) => {
@@ -16,7 +17,9 @@ export default function AIStressMapPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/drought/data');
+                // The map page uses a slightly different non-v1 path in current code, 
+                // but let's point it to the dynamic base.
+                const response = await fetch(`${API_BASE_URL.replace('/v1', '')}/drought/data`);
                 const result = await response.json();
 
                 if (result.status === 'success') {

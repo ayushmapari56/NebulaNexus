@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../apiConfig';
 
 const StatusBadge = ({ status }) => {
     const styles = {
@@ -28,7 +29,7 @@ export default function AllocationEnginePage() {
     const fetchAllocations = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:8000/api/v1/requests');
+            const response = await fetch(`${API_BASE_URL}/requests`);
             const data = await response.json();
 
             if (data && data.length > 0) {
@@ -77,7 +78,7 @@ export default function AllocationEnginePage() {
 
     const handleAction = async (id, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/v1/requests/${id}/action?status=${newStatus}`, {
+            const response = await fetch(`${API_BASE_URL}/requests/${id}/action?status=${newStatus}`, {
                 method: 'POST'
             });
 
@@ -88,7 +89,7 @@ export default function AllocationEnginePage() {
 
                     // Trigger Mobile Notification via API
                     try {
-                        await fetch('http://localhost:8000/api/v1/mobile/notifications', {
+                        await fetch(`${API_BASE_URL}/mobile/notifications`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({

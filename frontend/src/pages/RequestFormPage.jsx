@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../apiConfig';
 
 export default function RequestFormPage({ title, role }) {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function RequestFormPage({ title, role }) {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/api/v1/requests', {
+            const response = await fetch(`${API_BASE_URL}/requests`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
