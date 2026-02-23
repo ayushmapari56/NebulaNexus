@@ -29,7 +29,7 @@ export default function AIStressMapPage() {
                 </div>
 
                 <div className="flex gap-2 text-xs font-medium">
-                    <span className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded border border-slate-200"><span className="w-2 h-2 rounded-full bg-red-500"></span> Critical (>0.8)</span>
+                    <span className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded border border-slate-200"><span className="w-2 h-2 rounded-full bg-red-500"></span> Critical (&gt;0.8)</span>
                     <span className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded border border-slate-200"><span className="w-2 h-2 rounded-full bg-amber-500"></span> High (0.6-0.8)</span>
                     <span className="flex items-center gap-1 bg-white/50 px-2 py-1 rounded border border-slate-200"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Normal (&lt;0.4)</span>
                 </div>
