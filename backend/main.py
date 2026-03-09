@@ -22,9 +22,8 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api/v1")
 
-@app.get("/")
-def root():
-    return {"message": "NebulaNexus AI Drought Prevention API is running"}
+# The API is now prefixed with /api/v1 via the router
+# The root "/" is reserved for the React frontend
 
 @app.get("/api/drought/data")
 def get_drought_data():

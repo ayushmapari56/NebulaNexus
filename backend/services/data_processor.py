@@ -7,7 +7,7 @@ class DataProcessor:
         # We know the CSV is in the frontend public folder 
         self.csv_path = os.path.join(
             os.path.dirname(__file__), 
-            '..', '..', 'frontend', 'public', 
+            '..', 'data', 
             'DISTRICT_RAINFALL_DISTRIBUTION_COUNTRY_INDIA_cd.csv'
         )
 
